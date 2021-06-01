@@ -1,16 +1,7 @@
 # vim: et ts=4 sts=4 sw=4 tw=0
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.5)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.16.3)
 PROJECT(jsoncpp)
-
-# Find catkin macros and libraries
-find_package(catkin)
-
-# What is published by the 'jsoncpp package'
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES jsoncpp
-)
 
 ENABLE_TESTING()
 
