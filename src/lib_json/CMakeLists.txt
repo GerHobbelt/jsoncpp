@@ -139,6 +139,7 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 if(BUILD_STATIC_LIBS)
+    add_definitions(-D_HAS_ITERATOR_DEBUGGING=0)
     set(STATIC_LIB ${PROJECT_NAME}_static)
     add_library(${STATIC_LIB} STATIC ${PUBLIC_HEADERS} ${JSONCPP_SOURCES})
 
@@ -173,6 +174,7 @@ if(BUILD_STATIC_LIBS)
 endif()
 
 if(BUILD_OBJECT_LIBS)
+    add_definitions(-D_HAS_ITERATOR_DEBUGGING=0)
     set(OBJECT_LIB ${PROJECT_NAME}_object)
     add_library(${OBJECT_LIB} OBJECT ${PUBLIC_HEADERS} ${JSONCPP_SOURCES})
 
