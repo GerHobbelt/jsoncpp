@@ -122,6 +122,11 @@ if(BUILD_SHARED_LIBS)
         POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
     )
 
+    if(OS2)
+        set_target_properties(${SHARED_LIB} PROPERTIES
+            OS2_DEF_VENDOR "$ENV{VENDOR}"
+            OS2_DEF_PATCH "${PROJECT_VERSION_PATCH}")
+    endif()
     # Set library's runtime search path on OSX
     if(APPLE)
         set_target_properties(${SHARED_LIB} PROPERTIES INSTALL_RPATH "@loader_path/.")
