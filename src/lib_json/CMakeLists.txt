@@ -171,7 +171,7 @@ list(APPEND REQUIRED_FEATURES
     endif()
 
     list(APPEND CMAKE_TARGETS ${STATIC_LIB})
-endif()
+    
     set(OBJECT_LIB ${PROJECT_NAME}_object)
     add_library(${OBJECT_LIB} OBJECT ${PUBLIC_HEADERS} ${JSONCPP_SOURCES})
 
