@@ -2,20 +2,16 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_G
     #-Werror=* was introduced -after- GCC 4.1.2
     add_compile_options("-Werror=strict-aliasing")
 endif()
-
 include(CheckIncludeFileCXX)
 include(CheckTypeSize)
 include(CheckStructHasMember)
 include(CheckCXXSymbolExists)
-
 check_include_file_cxx(clocale HAVE_CLOCALE)
 check_cxx_symbol_exists(localeconv clocale HAVE_LOCALECONV)
-
 set(CMAKE_EXTRA_INCLUDE_FILES clocale)
 check_type_size(lconv LCONV_SIZE LANGUAGE CXX)
 unset(CMAKE_EXTRA_INCLUDE_FILES)
 check_struct_has_member(lconv decimal_point clocale HAVE_DECIMAL_POINT LANGUAGE CXX)
-
 if(NOT (HAVE_CLOCALE AND HAVE_LCONV_SIZE AND HAVE_DECIMAL_POINT AND HAVE_LOCALECONV))
     message(WARNING "Locale functionality is not supported")
     if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12.0)
@@ -24,9 +20,7 @@ if(NOT (HAVE_CLOCALE AND HAVE_LCONV_SIZE AND HAVE_DECIMAL_POINT AND HAVE_LOCALEC
         add_definitions(-DJSONCPP_NO_LOCALE_SUPPORT)
     endif()
 endif()
-
 set(JSONCPP_INCLUDE_DIR ../../include)
-
 set(PUBLIC_HEADERS
     ${JSONCPP_INCLUDE_DIR}/json/config.h
     ${JSONCPP_INCLUDE_DIR}/json/forwards.h
@@ -37,9 +31,7 @@ set(PUBLIC_HEADERS
     ${JSONCPP_INCLUDE_DIR}/json/writer.h
     ${JSONCPP_INCLUDE_DIR}/json/assertions.h
 )
-
 source_group("Public API" FILES ${PUBLIC_HEADERS})
-
 set(JSONCPP_SOURCES
     json_tool.h
     json_reader.cpp
@@ -47,14 +39,12 @@ set(JSONCPP_SOURCES
     json_value.cpp
     json_writer.cpp
 )
-
 # Install instructions for this target
 if(JSONCPP_WITH_CMAKE_PACKAGE)
     set(INSTALL_EXPORT EXPORT jsoncpp)
 else()
     set(INSTALL_EXPORT)
 endif()
-
 # Specify compiler features required when compiling a given target.
 # See https://cmake.org/cmake/help/v3.1/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html#prop_gbl:CMAKE_CXX_KNOWN_FEATURES
 # for complete list of features available
@@ -104,15 +94,11 @@ list(APPEND REQUIRED_FEATURES
         cxx_variadic_macros # Variadic macros, as defined in N1653.
         cxx_variadic_templates # Variadic templates, as defined in N2242.
 )
-
-
-if(BUILD_SHARED_LIBS)
     if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12.0)
         add_compile_definitions(JSON_DLL_BUILD)
     else()
         add_definitions(-DJSON_DLL_BUILD)
     endif()
-
     set(SHARED_LIB ${PROJECT_NAME}_lib)
     add_library(${SHARED_LIB} SHARED ${PUBLIC_HEADERS} ${JSONCPP_SOURCES})
     set_target_properties(${SHARED_LIB} PROPERTIES
@@ -121,27 +107,19 @@ if(BUILD_SHARED_LIBS)
         SOVERSION ${PROJECT_SOVERSION}
         POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
     )
-
     # Set library's runtime search path on OSX
     if(APPLE)
         set_target_properties(${SHARED_LIB} PROPERTIES INSTALL_RPATH "@loader_path/.")
     endif()
-
     target_compile_features(${SHARED_LIB} PUBLIC ${REQUIRED_FEATURES})
-
     target_include_directories(${SHARED_LIB} PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/${JSONCPP_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/json>
     )
-
     list(APPEND CMAKE_TARGETS ${SHARED_LIB})
-endif()
-
-if(BUILD_STATIC_LIBS)
     set(STATIC_LIB ${PROJECT_NAME}_static)
     add_library(${STATIC_LIB} STATIC ${PUBLIC_HEADERS} ${JSONCPP_SOURCES})
-
     # avoid name clashes on windows as the shared import lib is also named jsoncpp.lib
     if(NOT DEFINED STATIC_SUFFIX AND BUILD_SHARED_LIBS)
         if (MSVC)
@@ -150,59 +128,43 @@ if(BUILD_STATIC_LIBS)
             set(STATIC_SUFFIX "")
         endif()
     endif()
-
     set_target_properties(${STATIC_LIB} PROPERTIES
         OUTPUT_NAME jsoncpp${STATIC_SUFFIX}
         VERSION ${PROJECT_VERSION}
     )
-
     # Set library's runtime search path on OSX
     if(APPLE)
         set_target_properties(${STATIC_LIB} PROPERTIES INSTALL_RPATH "@loader_path/.")
     endif()
-
     target_compile_features(${STATIC_LIB} PUBLIC ${REQUIRED_FEATURES})
-
     target_include_directories(${STATIC_LIB} PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/${JSONCPP_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/json>
     )
-
     list(APPEND CMAKE_TARGETS ${STATIC_LIB})
-endif()
-
-if(BUILD_OBJECT_LIBS)
     set(OBJECT_LIB ${PROJECT_NAME}_object)
     add_library(${OBJECT_LIB} OBJECT ${PUBLIC_HEADERS} ${JSONCPP_SOURCES})
-
     set_target_properties(${OBJECT_LIB} PROPERTIES
         OUTPUT_NAME jsoncpp
         VERSION ${PROJECT_VERSION}
         SOVERSION ${PROJECT_SOVERSION}
         POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
     )
-
     # Set library's runtime search path on OSX
     if(APPLE)
         set_target_properties(${OBJECT_LIB} PROPERTIES INSTALL_RPATH "@loader_path/.")
     endif()
-
     target_compile_features(${OBJECT_LIB} PUBLIC ${REQUIRED_FEATURES})
-
     target_include_directories(${OBJECT_LIB} PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/${JSONCPP_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/json>
     )
-
     list(APPEND CMAKE_TARGETS ${OBJECT_LIB})
-endif()
-
 install(TARGETS ${CMAKE_TARGETS} ${INSTALL_EXPORT}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     OBJECTS DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-
