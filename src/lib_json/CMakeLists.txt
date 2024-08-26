@@ -125,12 +125,6 @@ if(BUILD_SHARED_LIBS)
 
     set(SHARED_LIB ${PROJECT_NAME}_lib)
     add_library(${SHARED_LIB} SHARED ${PUBLIC_HEADERS} ${JSONCPP_SOURCES})
-    set_target_properties(${SHARED_LIB} PROPERTIES
-        OUTPUT_NAME jsoncpp
-        VERSION ${PROJECT_VERSION}
-        SOVERSION ${PROJECT_SOVERSION}
-        POSITION_INDEPENDENT_CODE ON
-    )
 
     # Set library's runtime search path on OSX
     if(APPLE)
@@ -186,12 +180,6 @@ if(BUILD_OBJECT_LIBS)
     set(OBJECT_LIB ${PROJECT_NAME}_object)
     add_library(${OBJECT_LIB} OBJECT ${PUBLIC_HEADERS} ${JSONCPP_SOURCES})
 
-    set_target_properties(${OBJECT_LIB} PROPERTIES
-        OUTPUT_NAME jsoncpp
-        VERSION ${PROJECT_VERSION}
-        SOVERSION ${PROJECT_SOVERSION}
-        POSITION_INDEPENDENT_CODE ON
-    )
 
     # Set library's runtime search path on OSX
     if(APPLE)
