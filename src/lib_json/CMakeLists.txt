@@ -116,82 +116,28 @@ list(APPEND REQUIRED_FEATURES
 )
 
 
-    if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12.0)
-        add_compile_definitions(JSON_DLL_BUILD)
-    else()
-        add_definitions(-DJSON_DLL_BUILD)
-    endif()
+    if(BUILD_SHARED_LIBS)
+    set(LIBRARY_TYPE SHARED)
+else()
+    set(LIBRARY_TYPE STATIC)
+endif()
 
-    set(SHARED_LIB ${PROJECT_NAME}_lib)
-    add_library(${SHARED_LIB} SHARED ${PUBLIC_HEADERS} ${JSONCPP_SOURCES})
+set(LIB ${PROJECT_NAME}_lib)
+add_library(${LIB} ${LIBRARY_TYPE} ${PUBLIC_HEADERS} ${JSONCPP_SOURCES})
 
-    # Set library's runtime search path on OSX
-    if(APPLE)
-        set_target_properties(${SHARED_LIB} PROPERTIES INSTALL_RPATH "@loader_path/.")
-    endif()
+# ... (rest of the script remains the same)
 
-    target_compile_features(${SHARED_LIB} PUBLIC ${REQUIRED_FEATURES})
+target_compile_features(${LIB} PUBLIC ${REQUIRED_FEATURES})
 
-    if(NOT CMAKE_VERSION VERSION_LESS 2.8.11)
-        target_include_directories(${SHARED_LIB} PUBLIC
-            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/${JSONCPP_INCLUDE_DIR}>
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/json>
-        )
-    endif()
-
-    list(APPEND CMAKE_TARGETS ${SHARED_LIB})
-    
-    set(STATIC_LIB ${PROJECT_NAME}_static)
-    add_library(${STATIC_LIB} STATIC ${PUBLIC_HEADERS} ${JSONCPP_SOURCES})
-
-    # avoid name clashes on windows as the shared import lib is alse named jsoncpp.lib
-    if(NOT DEFINED STATIC_SUFFIX AND BUILD_SHARED_LIBS)
-        set(STATIC_SUFFIX "_static")
-    endif()
-
-    set_target_properties(${STATIC_LIB} PROPERTIES
-        OUTPUT_NAME jsoncpp${STATIC_SUFFIX}
-        VERSION ${PROJECT_VERSION}
+if(NOT CMAKE_VERSION VERSION_LESS 2.8.11)
+    target_include_directories(${LIB} PUBLIC
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/${JSONCPP_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/json>
     )
+endif()
 
-    # Set library's runtime search path on OSX
-    if(APPLE)
-        set_target_properties(${STATIC_LIB} PROPERTIES INSTALL_RPATH "@loader_path/.")
-    endif()
-
-    target_compile_features(${STATIC_LIB} PUBLIC ${REQUIRED_FEATURES})
-
-    if(NOT CMAKE_VERSION VERSION_LESS 2.8.11)
-        target_include_directories(${STATIC_LIB} PUBLIC
-            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/${JSONCPP_INCLUDE_DIR}>
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/json>
-        )
-    endif()
-
-    list(APPEND CMAKE_TARGETS ${STATIC_LIB})
-    
-    set(OBJECT_LIB ${PROJECT_NAME}_object)
-    add_library(${OBJECT_LIB} OBJECT ${PUBLIC_HEADERS} ${JSONCPP_SOURCES})
-
-
-    # Set library's runtime search path on OSX
-    if(APPLE)
-        set_target_properties(${OBJECT_LIB} PROPERTIES INSTALL_RPATH "@loader_path/.")
-    endif()
-
-    target_compile_features(${OBJECT_LIB} PUBLIC ${REQUIRED_FEATURES})
-
-    if(NOT CMAKE_VERSION VERSION_LESS 2.8.11)
-        target_include_directories(${OBJECT_LIB} PUBLIC
-            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/${JSONCPP_INCLUDE_DIR}>
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/json>
-        )
-    endif()
-
-    list(APPEND CMAKE_TARGETS ${OBJECT_LIB})
+list(APPEND CMAKE_TARGETS ${LIB})
 
 install(TARGETS ${CMAKE_TARGETS} ${INSTALL_EXPORT}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
