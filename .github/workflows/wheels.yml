@@ -6,8 +6,6 @@ on:
       - published
 
 env:
-  CIBW_BUILD: "cp310-*64"
-  CIBW_SKIP: "*musl*"
   CIBW_REPAIR_WHEEL_COMMAND: ""
 
 jobs:
