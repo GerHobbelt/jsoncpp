@@ -37,8 +37,16 @@
 
 // Define JSONCPP_DEPRECATED_STACK_LIMIT as an appropriate integer at compile
 // time to change the stack limit
+// NOTE:LEA: reduced JSONCPP_DEPRECATED_STACK_LIMIT from 1000 to 500. This is the stack limit
+//           of the Reader::nodes_ and not the call stack limit of the system. At 1000, with a
+//           json file designed to cause stack overflow (as a hacking tool) this would overflow
+//           the system callstack when the Reader::nodes_ was only at 662 or so
+//           For Techsmith's purposes, we never have project nodes nested so deeply, so 500 seems
+//           like a perfectly reasonable limit and should not cause any projects to fail to load.
+//           Also, when trying to create that deep a nesting by repeated grouping of a media,
+//           Camtasiaa failed at ~150 levels deep so I could not get anywhere near 500.
 #if !defined(JSONCPP_DEPRECATED_STACK_LIMIT)
-#define JSONCPP_DEPRECATED_STACK_LIMIT 1000
+#define JSONCPP_DEPRECATED_STACK_LIMIT 500
 #endif
 
 static size_t const stackLimit_g =
@@ -577,6 +585,7 @@ bool Reader::decodeDouble(Token& token) {
 bool Reader::decodeDouble(Token& token, Value& decoded) {
   double value = 0;
   IStringStream is(String(token.start_, token.end_));
+  is.imbue( std::locale::classic() );
   if (!(is >> value)) {
     if (value == std::numeric_limits<double>::max())
       value = std::numeric_limits<double>::infinity();
