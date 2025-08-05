@@ -13,7 +13,13 @@
  * // comment after
  * // comment tail
  */
-int main(int argc, char* argv[]) {
+
+#if defined(BUILD_MONOLITHIC)
+#define main jsoncpp_stream_read_example_main
+#endif
+
+extern "C"
+int main(int argc, const char** argv) {
   Json::Value root;
   std::ifstream ifs;
   ifs.open(argv[1]);

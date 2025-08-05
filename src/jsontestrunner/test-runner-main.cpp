@@ -314,7 +314,12 @@ static int runTest(Options const& opts, bool use_legacy) {
   return exitCode;
 }
 
-int main(int argc, const char* argv[]) {
+#if defined(BUILD_MONOLITHIC)
+#define main jsoncpp_test_runner_main
+#endif
+
+extern "C"
+int main(int argc, const char** argv) {
   Options opts;
   try {
     int exitCode = parseCommandLine(argc, argv, &opts);

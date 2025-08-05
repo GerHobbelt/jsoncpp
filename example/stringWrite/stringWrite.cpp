@@ -12,7 +12,13 @@
  *     }
  * }
  */
-int main() {
+
+#if defined(BUILD_MONOLITHIC)
+#define main jsoncpp_string_write_example_main
+#endif
+
+extern "C"
+int main(void) {
   Json::Value root;
   Json::Value data;
   constexpr bool shouldUseOldWay = false;

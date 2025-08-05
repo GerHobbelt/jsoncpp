@@ -10,7 +10,13 @@
  * colin
  * 20
  */
-int main() {
+
+#if defined(BUILD_MONOLITHIC)
+#define main jsoncpp_string_read_example_main
+#endif
+
+extern "C"
+int main(void) {
   const std::string rawJson = R"({"Age": 20, "Name": "colin"})";
   const auto rawJsonLength = static_cast<int>(rawJson.length());
   constexpr bool shouldUseOldWay = false;

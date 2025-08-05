@@ -10,7 +10,13 @@
  *     "Name" : "robin"
  * }
  */
-int main() {
+
+#if defined(BUILD_MONOLITHIC)
+#define main jsoncpp_stream_write_example_main
+#endif
+
+extern "C"
+int main(void) {
   Json::Value root;
   Json::StreamWriterBuilder builder;
   const std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());

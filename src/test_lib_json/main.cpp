@@ -4130,7 +4130,13 @@ JSONTEST_FIXTURE_LOCAL(ParseWithStructuredErrorsTest, singleError) {
   testErrors("{ 1 : 2 }", false, {{2, 3, "Missing '}' or object member name"}});
 }
 
-int main(int argc, const char* argv[]) {
+
+#if defined(BUILD_MONOLITHIC)
+#define main jsoncpp_test_lib_main
+#endif
+
+extern "C"
+int main(int argc, const char** argv) {
   JsonTest::Runner runner;
 
   for (auto& local : local_) {
