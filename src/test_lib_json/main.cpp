@@ -3519,15 +3519,15 @@ struct CharReaderAllowDropNullTest : JsonTest::TestCase {
   Value emptyArray = Value{Json::arrayValue};
 
   ValueCheck checkEq(const Value& v) {
-    return [=](const Value& root) { JSONTEST_ASSERT_EQUAL(root, v); };
+    return [this, v](const Value& root) { JSONTEST_ASSERT_EQUAL(root, v); };
   }
 
   static ValueCheck objGetAnd(std::string idx, ValueCheck f) {
-    return [=](const Value& root) { f(root.get(idx, true)); };
+    return [idx, f](const Value& root) { f(root.get(idx, true)); };
   }
 
   static ValueCheck arrGetAnd(int idx, ValueCheck f) {
-    return [=](const Value& root) { f(root[idx]); };
+    return [idx, f](const Value& root) { f(root[idx]); };
   }
 };
 
